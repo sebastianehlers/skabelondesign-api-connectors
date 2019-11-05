@@ -1,4 +1,4 @@
-# Document Automation connector examples
+# Document Automation connector samples
 
 ## Intro
 
