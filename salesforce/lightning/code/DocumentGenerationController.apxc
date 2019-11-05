@@ -1,0 +1,42 @@
+public class DocumentGenerationController {
+    public static String Host = 'host here';
+    public static String AuthString = 'token here';
+    
+    //START Account Opportunities Contacts Cases
+    class AccountContactsCases {
+        public List<Contact> contacts;
+        public List<Case> cases;
+        public List<Opportunity> opportunities;
+        public Account account;
+    }
+    
+    @AuraEnabled
+    public static String getAccountWithContactsAndCasesAsJson (Id recordId)
+    {
+        AccountContactsCases data = new AccountContactsCases();
+        data.account = [SELECT name, website, industry, phone, description FROM Account WHERE Id=: recordId ];
+        data.contacts = [SELECT id, name, firstname, lastname, email, phone FROM Contact WHERE AccountId=: recordId ];
+        data.cases = [SELECT id, CaseNumber, Subject, Priority, ContactEmail, ContactPhone, Status FROM Case WHERE AccountId=: recordId ];
+        data.opportunities = [SELECT Name, StageName, Amount, CloseDate, Description FROM Opportunity WHERE AccountId=: recordId ];
+        string jsonData = JSON.serializePretty(data);
+        return jsonData;
+    }
+    //END Account Opportunities Contacts Cases
+    
+    @AuraEnabled
+    public static String generateDocumentFromTemplate(string dataJson, string templateId)
+    {
+        // Instantiate a new http object
+        Http h = new Http();
+        HttpRequest req = new HttpRequest();   
+        req.setEndpoint(Host + '/api/template/' + templateId + '/document/generate');
+        req.setMethod('POST');
+        req.setHeader('Content-type', 'application/json');
+        req.setHeader('Authorization', 'Bearer ' + AuthString);
+        req.setBody(dataJson); 
+        //Send the request, and return a response
+        HttpResponse resp = h.send(req);
+        Blob blobDocument = resp.getBodyAsBlob();
+        return EncodingUtil.base64Encode(blobDocument);
+    }
+}

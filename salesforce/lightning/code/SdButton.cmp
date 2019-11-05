@@ -1,0 +1,4 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName" access="global" controller="DocumentGenerationController">
+    <aura:attribute name="recordId" type="Id" />
+    <lightning:button label="Generate Document" onclick="{! c.generateDocument }" iconName="utility:download" iconPosition="left"  variant="brand" />
+</aura:component>
