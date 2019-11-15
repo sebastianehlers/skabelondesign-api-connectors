@@ -19,6 +19,7 @@
             });
             $A.enqueueAction(generateDocumentComponent);
         });
+        
         generateDocumentComponent.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS' && component.isValid())
@@ -34,7 +35,7 @@
                 link.href = window.URL.createObjectURL(new Blob([bytes.buffer]));
                 link.download = "Document.docx"
                 link.click();
-                URL.revokeObjectURL(link.href);                        
+                URL.revokeObjectURL(link.href);   
             }
         });
         $A.enqueueAction(getJsonDataComponent);
